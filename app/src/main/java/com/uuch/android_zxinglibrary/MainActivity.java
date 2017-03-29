@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -15,7 +14,6 @@ import com.uuzuche.lib_zxing.activity.CodeUtils;
 
 import java.util.List;
 
-import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.AppSettingsDialog;
 import pub.devrel.easypermissions.EasyPermissions;
 
@@ -64,10 +62,10 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
          *
          * 测试生成二维码图片
          */
-        button1.setOnClickListener(new ButtonOnClickListener(button1.getId()));
-        button2.setOnClickListener(new ButtonOnClickListener(button2.getId()));
-        button3.setOnClickListener(new ButtonOnClickListener(button3.getId()));
-        button4.setOnClickListener(new ButtonOnClickListener(button4.getId()));
+        button1.setOnClickListener(new ButtonOnClickListener());
+        button2.setOnClickListener(new ButtonOnClickListener());
+        button3.setOnClickListener(new ButtonOnClickListener());
+        button4.setOnClickListener(new ButtonOnClickListener());
     }
 
 
@@ -144,17 +142,22 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
     }
 
 
+/*
     @AfterPermissionGranted(REQUEST_CAMERA_PERM)
-    public void cameraTask(int viewId) {
+    public void cameraTask() {
         if (EasyPermissions.hasPermissions(this, Manifest.permission.CAMERA)) {
             // Have permission, do the thing!
-            onClick(viewId);
+
+            Toast.makeText(this, "应用已经被赋予了权限！！！", Toast.LENGTH_LONG).show();
+
+//            onClick();
         } else {
             // Ask for one permission
             EasyPermissions.requestPermissions(this, "需要请求camera权限",
                     REQUEST_CAMERA_PERM, Manifest.permission.CAMERA);
         }
     }
+*/
 
     @Override
     public void onPermissionsGranted(int requestCode, List<String> perms) {
@@ -181,12 +184,6 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
      */
     class ButtonOnClickListener implements View.OnClickListener{
 
-        private int buttonId;
-
-        public ButtonOnClickListener(int buttonId) {
-            this.buttonId = buttonId;
-        }
-
         @Override
         public void onClick(View v) {
             if (v.getId() == R.id.button2) {
@@ -197,12 +194,20 @@ public class MainActivity extends BaseActivity implements EasyPermissions.Permis
             } else if (v.getId() == R.id.button4) {
                 Intent intent = new Intent(MainActivity.this, ThreeActivity.class);
                 startActivity(intent);
-            } else {
-                cameraTask(buttonId);
+            } else if(v.getId() == R.id.button1 || v.getId() == R.id.button3){
+                if (EasyPermissions.hasPermissions(MainActivity.this, Manifest.permission.CAMERA)) {
+                    // Have permission, do the thing!
+                    Toast.makeText(MainActivity.this, "应用已经被赋予了权限！！！", Toast.LENGTH_LONG).show();
+                    MainActivity.this.onClick(v.getId());
+                } else {
+                    // Ask for one permission
+                    Toast.makeText(MainActivity.this, "应用无权限！！！需要申请", Toast.LENGTH_LONG).show();
+                    EasyPermissions.requestPermissions(MainActivity.this, "需要请求camera权限",
+                            REQUEST_CAMERA_PERM, Manifest.permission.CAMERA);
+                }
             }
         }
     }
-
 
     /**
      * 按钮点击事件处理逻辑

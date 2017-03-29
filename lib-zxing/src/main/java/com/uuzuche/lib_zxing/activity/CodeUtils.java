@@ -1,10 +1,12 @@
 package com.uuzuche.lib_zxing.activity;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.hardware.Camera;
+import android.hardware.camera2.CameraAccessException;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 
@@ -24,7 +26,6 @@ import com.uuzuche.lib_zxing.camera.CameraManager;
 import com.uuzuche.lib_zxing.decoding.DecodeFormatManager;
 
 import java.util.Hashtable;
-import java.util.Objects;
 import java.util.Vector;
 
 /**
@@ -217,6 +218,36 @@ public class CodeUtils {
                 parameter.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
                 camera.setParameters(parameter);
             }
+        }
+    }
+
+    public static void isLightEnable2(Context context, boolean isEnable){
+        android.hardware.camera2.CameraManager manager = (android.hardware.camera2.CameraManager)
+                context.getSystemService(Context.CAMERA_SERVICE);
+        if (isLOLLIPOP()) {
+            if(isEnable){
+                try {
+                    manager.setTorchMode("0", true);
+                } catch (CameraAccessException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                try {
+                    manager.setTorchMode("0", false);
+                } catch (CameraAccessException e) {
+                    e.printStackTrace();
+                }
+            }
+        } else {
+
+        }
+    }
+
+    private static boolean isLOLLIPOP() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            return true;
+        } else {
+            return false;
         }
     }
 }
